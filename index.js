@@ -19,8 +19,25 @@ client.on('message', message => {
 			// get countdown values
 			const { minutesUntilRevive, hoursUntilRevive, daysUntilRevive} = getTimeUntilRevive();
 
+			// format grammar
+			if(minutesUntilRevive == 1) {
+				var minutes = ' minute'
+			} else {
+				var minutes = ' minutes'
+			}
+			if(hoursUntilRevive == 1) {
+				var hours = ' hour '
+			} else {
+				var hours = ' hours '
+			}
+			if(daysUntilRevive == 1) {
+				var days = ' day '
+			} else {
+				var days = ' days '
+			}
+
 			// display countdown to channel
-			message.channel.send('Revive Countdown: ' + daysUntilRevive + ' days '+ hoursUntilRevive + ' hours ' + minutesUntilRevive + ' minutes');
+			message.channel.send('Revive Countdown: ' + daysUntilRevive + days + hoursUntilRevive + hours + minutesUntilRevive + minutes);
 		}
 });
 
