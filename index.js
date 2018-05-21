@@ -1,5 +1,5 @@
 // hcsmp-date-bot
-// obvolvo . version 1.0 . obvolvogames@gmail.com
+// obvolvo . version 1.1 . obvolvogames@gmail.com
 
 // init.
 const Discord = require('discord.js');
@@ -16,15 +16,11 @@ client.login(`${token}`);
 // command interface
 client.on('message', message => {
 	if(message.content === `${prefix}display-time-left`) {
-			const { minutes, hours, days} = getTimeUntilRevive();
-			// display time until nearest revive in order: days, hours, minutes
-			if(daysUntilRevive > 1) {
-				message.channel.send('Revive Countdown: ' + daysUntilRevive + ' days ');
-			} else if(hoursUntilRevive > 1) {
-				message.channel.send('Revive Countdown: ' + hoursUntilRevive + ' hours ');
-			} else {
-				message.channel.send('Revive Countdown: ' + minutesUntilRevive + ' minutes ');
-			}
+			// get countdown values
+			const { minutesUntilRevive, hoursUntilRevive, daysUntilRevive} = getTimeUntilRevive();
+
+			// display countdown to channel
+			message.channel.send('Revive Countdown: ' + daysUntilRevive + ' days '+ hoursUntilRevive + ' hours ' + minutesUntilRevive + ' minutes');
 		}
 });
 
@@ -38,46 +34,36 @@ function getTimeUntilRevive() {
 	var lifeResetDateTime1 = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth()+1, 1);
 	var lifeResetDateTime2 = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth()+1, 16);
 
-	// determine time until nearest revive
+	// determine nearest revive date
+	var timeUntilRevive = 0;
 	if((lifeResetDateTime1 - currentDateTime) < (lifeResetDateTime2 - currentDateTime)) {
-		timeUntilRevive = (lifeResetDateTime1 - currentDateTime)
+		timeUntilRevive = (lifeResetDateTime1 - currentDateTime);
 	} else {
-		timeUntilRevive = (lifeResetDateTime2 - currentDateTime)
+		timeUntilRevive = (lifeResetDateTime2 - currentDateTime);
 	}
 
-	// convert time left to minutes
-	minutesUntilRevive = parseInt(timeUntilRevive / (1000 * 60));
+	// var. init.
+	var minutesUntilRevive = 0;
+	var hoursUntilRevive = 0;
+	var daysUntilRevive = 0;
 
-	// determine # of days until revive
-	if(minutesUntilRevive > 1440) {
-		daysUntilRevive = parseInt(minutesUntilRevive / 1440)
-		remainingTime = (minutesUntilRevive % 1440)
+	// convert timeUntilRevive from milliseconds to minutes
+	timeUntilRevive = parseInt(timeUntilRevive / (1000 * 60));
+	var remainingTime = 0;
+
+	// divide remaining time into days, hours, and minutes
+	if(timeUntilRevive > 1440) {
+		daysUntilRevive = parseInt(timeUntilRevive / 1440)
+		remainingTime = (timeUntilRevive % 1440)
 	} else {
 		daysUntilRevive = 0;
+		remainingTime = timeUntilRevive;
 	}
 
-	// determine # of hours until revive
-	if((remainingTime) < 1440 && (remainingTime > 60)) {
-		hoursUntilRevive = parseInt(remainingTime / 60)
-		remainingTime = (remainingTime % 60)
+	if(((remainingTime) < 1440) && (remainingTime > 60)) {
+		hoursUntilRevive = parseInt(remainingTime / 60);
+		minutesUntilRevive = (remainingTime % 60);
 	} else {
-		hoursUntilRevive = 0;
-		minutesUntilRevive = remainingTime;
-	}
-
-	// determine # of minutes until revive
-	minutesUntilRevive =
-	// set values for days, hours, and minutes
-	if(minutesUntilRevive > 1440) {
-		daysUntilRevive = parseInt(minutesUntilRevive / 1440);
-		hoursUntilRevive = 0;
-		minutesUntilRevive = 0;
-	} else if((minutesUntilRevive > 60)) {
-		daysUntilRevive = 0;
-		hoursUntilRevive = parseInt(minutesUntilRevive / 60)
-		minutesUntilRevive = 0;
-	} else {
-		daysUntilRevive = 0;
 		hoursUntilRevive = 0;
 	}
 
