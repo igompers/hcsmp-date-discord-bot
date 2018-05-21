@@ -1,5 +1,5 @@
 // hcsmp-date-bot
-// obvolvo . version 1.1 . obvolvogames@gmail.com
+// obvolvo . version 1.1.3 . obvolvogames@gmail.com
 
 // init.
 const Discord = require('discord.js');
