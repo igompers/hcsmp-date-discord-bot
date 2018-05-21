@@ -1,5 +1,5 @@
-// hcsmp-date-discord-bot
-// obvolvo . version 1.0 . 5/21/2018
+// hcsmp-date-bot
+// obvolvo . version 1.0 . obvolvogames@gmail.com
 
 // init.
 const Discord = require('discord.js');
@@ -16,7 +16,7 @@ client.login(`${token}`);
 // command interface
 client.on('message', message => {
 	if(message.content === `${prefix}display-time-left`) {
-			main();
+			const { minutes, hours, days} = getTimeUntilRevive();
 			// display time until nearest revive in order: days, hours, minutes
 			if(daysUntilRevive > 1) {
 				message.channel.send('Revive Countdown: ' + daysUntilRevive + ' days ');
@@ -29,10 +29,10 @@ client.on('message', message => {
 });
 
 // determine time until nearest revive
-function main() {
+function getTimeUntilRevive() {
 
 	// set current date & time
-	var currentDateTime = new Date();
+	const currentDateTime = new Date();
 
 	// set revive dates
 	var lifeResetDateTime1 = new Date(currentDateTime.getFullYear(), currentDateTime.getMonth()+1, 1);
@@ -48,6 +48,25 @@ function main() {
 	// convert time left to minutes
 	minutesUntilRevive = parseInt(timeUntilRevive / (1000 * 60));
 
+	// determine # of days until revive
+	if(minutesUntilRevive > 1440) {
+		daysUntilRevive = parseInt(minutesUntilRevive / 1440)
+		remainingTime = (minutesUntilRevive % 1440)
+	} else {
+		daysUntilRevive = 0;
+	}
+
+	// determine # of hours until revive
+	if((remainingTime) < 1440 && (remainingTime > 60)) {
+		hoursUntilRevive = parseInt(remainingTime / 60)
+		remainingTime = (remainingTime % 60)
+	} else {
+		hoursUntilRevive = 0;
+		minutesUntilRevive = remainingTime;
+	}
+
+	// determine # of minutes until revive
+	minutesUntilRevive =
 	// set values for days, hours, and minutes
 	if(minutesUntilRevive > 1440) {
 		daysUntilRevive = parseInt(minutesUntilRevive / 1440);
@@ -61,5 +80,12 @@ function main() {
 		daysUntilRevive = 0;
 		hoursUntilRevive = 0;
 	}
+
+	// return values
+	return {
+		minutesUntilRevive,
+		hoursUntilRevive,
+		daysUntilRevive,
+	};
 
 }
